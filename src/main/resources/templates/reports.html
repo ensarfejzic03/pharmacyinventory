@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eef6f8;
+        }
+
+        .header {
+            background-color: #0b5c75;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .nav {
+            background-color: #08475c;
+            padding: 13px;
+            text-align: center;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 16px;
+            font-weight: bold;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .section-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: #0b5c75;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .description {
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .role-note {
+            margin-bottom: 20px;
+            background-color: #e8f4f8;
+            padding: 12px;
+            border-left: 5px solid #0b5c75;
+            color: #444;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background-color: #0b5c75;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            color: #444;
+        }
+
+        tr:hover {
+            background-color: #f2f8fa;
+        }
+
+        .risk-high {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .risk-warning {
+            color: #d98c00;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            background-color: #e6f4ea;
+            color: green;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Pharmacy Medication Tracking System</h1>
+</div>
+
+<div class="nav">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/medications">Medications</a>
+    <a href="/inventory">Inventory</a>
+    <a href="/transactions">Transactions</a>
+    <a href="/alerts">Alerts</a>
+    <a href="/reports" th:if="${role != 'Technician'}">Reports</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+
+    <div class="role-note">
+        Logged in as:
+        <strong th:text="${role}"></strong>
+    </div>
+
+    <div class="section-box">
+        <h2 class="page-title">Most Used Medications</h2>
+
+        <p class="description">
+            This report shows which medications have been removed from inventory the most.
+        </p>
+
+        <table th:if="${!mostUsedMedications.isEmpty()}">
+            <tr>
+                <th>Medication Name</th>
+                <th>Times Used</th>
+                <th>Total Quantity Used</th>
+            </tr>
+
+            <tr th:each="row : ${mostUsedMedications}">
+                <td th:text="${row[0]}"></td>
+                <td th:text="${row[1]}"></td>
+                <td th:text="${row[2]}"></td>
+            </tr>
+        </table>
+
+        <div class="empty-message"
+             th:if="${mostUsedMedications.isEmpty()}">
+            No Stock Out transactions have been recorded yet.
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h2 class="page-title">Monthly Usage Trends</h2>
+
+        <p class="description">
+            This report shows medication usage by month based on Stock Out transactions.
+        </p>
+
+        <table th:if="${!monthlyUsageTrends.isEmpty()}">
+            <tr>
+                <th>Medication Name</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Total Usage</th>
+            </tr>
+
+            <tr th:each="row : ${monthlyUsageTrends}">
+                <td th:text="${row[0]}"></td>
+                <td th:text="${row[1]}"></td>
+                <td th:text="${row[2]}"></td>
+                <td th:text="${row[3]}"></td>
+            </tr>
+        </table>
+
+        <div class="empty-message"
+             th:if="${monthlyUsageTrends.isEmpty()}">
+            No monthly Stock Out usage data has been recorded yet.
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h2 class="page-title">
+            Medications Below Reorder Threshold
+        </h2>
+
+        <p class="description">
+            This report identifies medications where current quantity is below the reorder threshold.
+        </p>
+
+        <table th:if="${!lowStock.isEmpty()}">
+            <tr>
+                <th>Medication Name</th>
+                <th>Current Quantity</th>
+                <th>Reorder Threshold</th>
+                <th>Units Below Threshold</th>
+            </tr>
+
+            <tr th:each="item : ${lowStock}">
+                <td th:text="${item.medication.name}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${item.medication.reorderThreshold}"></td>
+                <td th:text="${item.medication.reorderThreshold - item.quantity}"></td>
+            </tr>
+        </table>
+
+        <div class="empty-message"
+             th:if="${lowStock.isEmpty()}">
+            No medications are currently below their reorder threshold.
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h2 class="page-title">High-Risk Medications</h2>
+
+        <p class="description">
+            This report combines low stock and high usage to identify medications at higher stockout risk.
+        </p>
+
+        <table th:if="${!highRiskMedications.isEmpty()}">
+            <tr>
+                <th>Medication Name</th>
+                <th>Current Quantity</th>
+                <th>Reorder Threshold</th>
+                <th>Units Below Threshold</th>
+                <th>Times Reduced</th>
+                <th>Total Quantity Removed</th>
+            </tr>
+
+            <tr th:each="row : ${highRiskMedications}">
+                <td th:text="${row[0]}"></td>
+                <td th:text="${row[1]}"></td>
+                <td th:text="${row[2]}"></td>
+                <td th:text="${row[2] - row[1]}"></td>
+                <td th:text="${row[3]}"></td>
+                <td th:text="${row[4]}"></td>
+            </tr>
+        </table>
+
+        <div class="empty-message"
+             th:if="${highRiskMedications.isEmpty()}">
+            No high-risk medications were found.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

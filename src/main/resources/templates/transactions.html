@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transactions</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eef6f8;
+        }
+
+        .header {
+            background-color: #0b5c75;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .nav {
+            background-color: #08475c;
+            padding: 13px;
+            text-align: center;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 16px;
+            font-weight: bold;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .section-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: #0b5c75;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .description {
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .role-note {
+            margin-bottom: 20px;
+            background-color: #e8f4f8;
+            padding: 12px;
+            border-left: 5px solid #0b5c75;
+            color: #444;
+            border-radius: 5px;
+        }
+
+        .message {
+            background-color: #e6f4ea;
+            color: green;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #842029;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        .btn {
+            background-color: #0b5c75;
+            color: white;
+            padding: 11px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background-color: #08475c;
+        }
+
+        .restricted-box {
+            background-color: #fff8e6;
+            border-left: 5px solid #f0ad4e;
+            padding: 15px;
+            color: #555;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background-color: #0b5c75;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            color: #444;
+        }
+
+        tr:hover {
+            background-color: #f2f8fa;
+        }
+
+        .stock-in {
+            color: green;
+            font-weight: bold;
+        }
+
+        .stock-out {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Pharmacy Medication Tracking System</h1>
+</div>
+
+<div class="nav">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/medications">Medications</a>
+    <a href="/inventory">Inventory</a>
+    <a href="/transactions">Transactions</a>
+    <a href="/alerts">Alerts</a>
+    <a href="/reports" th:if="${role != 'Technician'}">Reports</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+
+    <div class="role-note">
+        Logged in as: <strong th:text="${role}"></strong>
+    </div>
+
+    <div class="section-box">
+
+        <h2 class="page-title">Record Stock Transaction</h2>
+
+        <p class="description">
+            Enter Stock In or Stock Out activity. This page records the transaction
+            and updates the inventory quantity.
+        </p>
+        <div th:if="${canUpdateStock}">
+            <form action="/transactions" method="post">
+
+                <div class="form-row">
+                    <label for="inventory_id">
+                        Medication / Inventory Item
+                    </label>
+
+                    <select id="inventory_id" name="inventory_id" required>
+                        <option value="">Select inventory item...</option>
+
+                        <option th:each="item : ${inventory}"
+                                th:value="${item.inventoryID}"
+                                th:text="${item.medication.name}"
+                                th:selected="${selectedInventoryID != null and selectedInventoryID == item.inventoryID}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="transaction_type">
+                        Transaction Type
+                    </label>
+
+                    <select id="transaction_type" name="transaction_type" required>
+                        <option value="">
+                            Select transaction type...
+                        </option>
+
+                        <option value="Stock In">
+                            Stock In
+                        </option>
+
+                        <option value="Stock Out">
+                            Stock Out
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="amount_changed">
+                        Amount
+                    </label>
+
+                    <input
+                            type="number"
+                            id="amount_changed"
+                            name="amount_changed"
+                            min="1"
+                            placeholder="Enter quantity amount"
+                            required>
+                </div>
+
+                <button type="submit" class="btn">
+                    Save Transaction
+                </button>
+
+            </form>
+        </div>
+        <div th:if="${!canUpdateStock}" class="restricted-box">
+            You can view transaction history, but you do not have permission to update stock.
+        </div>
+
+    </div>
+
+    <div class="section-box">
+
+        <h2 class="page-title">
+            Recent Transaction History
+        </h2>
+
+        <p class="description">
+            The most recent Stock In and Stock Out records are shown below.
+        </p>
+
+        <table>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Medication Name</th>
+                <th>User</th>
+                <th>Type</th>
+                <th>Amount Changed</th>
+                <th>Date</th>
+            </tr>
+
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${transaction.transactionID}"></td>
+                <td th:text="${transaction.inventory.medication.name}"></td>
+                <td th:text="${transaction.user.firstName + ' ' + transaction.user.lastName}"></td>
+                <td th:text="${transaction.transactionType}"></td>
+                <td th:text="${transaction.amountChanged}"></td>
+                <td th:text="${transaction.transactionDate}"></td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>
