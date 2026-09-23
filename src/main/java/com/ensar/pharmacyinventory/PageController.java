@@ -112,8 +112,7 @@ public class PageController {
 
         addUserToModel(session, model);
 
-        model.addAttribute("medications", medicationRepository.findAll());
-
+        model.addAttribute("medications", medicationService.getAllMedications());
         return "medications";
     }
 
@@ -320,8 +319,7 @@ public class PageController {
 
         addUserToModel(session, model);
 
-        Medication medication =
-                medicationRepository.findById(id).orElseThrow();
+        Medication medication = medicationService.getMedicationById(id);
 
         model.addAttribute("medication", medication);
 
@@ -353,19 +351,19 @@ public class PageController {
             return "redirect:/dashboard";
         }
 
-        Medication medication =
-                medicationRepository.findById(medicationID).orElseThrow();
-
-        medication.setName(medication_name);
-        medication.setCategory(category);
-        medication.setReorderThreshold(reorder_threshold);
-        medication.setSupplierID(supplier_id);
-        medication.setDescription(description);
-
-        medicationRepository.save(medication);
+        medicationService.updateMedication(
+                medicationID,
+                medication_name,
+                category,
+                reorder_threshold,
+                supplier_id,
+                description
+        );
 
         return "redirect:/medications";
     }
+
+
 
     @GetMapping("/manageUsers")
     public String manageUsersPage(HttpSession session, Model model){
