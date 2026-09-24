@@ -66,4 +66,10 @@ public class MedicationService {
     public Medication getMedicationById(int id) {
         return medicationRepository.findById(id).orElseThrow();
     }
+    public List<Medication> searchMedications(String searchTerm) {
+        return medicationRepository.findByNameContainingIgnoreCase(searchTerm);
+    }
+    public long getMedicationCount() {
+        return medicationRepository.count();
+    }
 }

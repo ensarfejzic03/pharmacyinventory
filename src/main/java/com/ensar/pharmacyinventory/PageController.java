@@ -14,30 +14,28 @@ import java.time.LocalDateTime;
 @Controller
 public class PageController {
 
-    private MedicationRepository medicationRepository;
+    private final InventoryService inventoryService;
     private SupplierRepository supplierRepository;
     private MedicationService medicationService;
-    private InventoryRepository inventoryRepository;
     private TransactionRepository transactionRepository;
     private TransactionService transactionService;
     private UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    PageController(MedicationRepository medicationRepository,
-                   SupplierRepository supplierRepository,
-                   MedicationService medicationService,
-                   InventoryRepository inventoryRepository,
-                   TransactionRepository transactionRepository,
-                   TransactionService transactionService,
-                   UserRepository userRepository) {
+    PageController(
+            SupplierRepository supplierRepository,
+            MedicationService medicationService,
+            TransactionRepository transactionRepository,
+            TransactionService transactionService,
+            UserRepository userRepository,
+            InventoryService inventoryService) {
 
-        this.medicationRepository = medicationRepository;
         this.supplierRepository = supplierRepository;
         this.medicationService = medicationService;
-        this.inventoryRepository = inventoryRepository;
         this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
         this.userRepository = userRepository;
+        this.inventoryService = inventoryService;
     }
 
     @GetMapping("/login")
@@ -80,19 +78,17 @@ public class PageController {
 
         model.addAttribute(
                 "totalMedications",
-                medicationRepository.count()
+                medicationService.getMedicationCount()
         );
 
         model.addAttribute(
                 "lowStockCount",
-                inventoryRepository.findLowStock().size()
+                            inventoryService.getLowStock().size()
         );
 
         model.addAttribute(
                 "expiringSoonCount",
-                inventoryRepository.findExpiringSoon(
-                        LocalDate.now().plusDays(90)
-                ).size()
+                inventoryService.getExpiringSoon(LocalDate.now().plusDays(90)).size()
         );
 
         model.addAttribute(
@@ -125,7 +121,7 @@ public class PageController {
 
         addUserToModel(session, model);
 
-        model.addAttribute("inventory", inventoryRepository.findAll());
+        model.addAttribute("inventory", inventoryService.getAllInventory());
 
         return "inventory";
     }
@@ -143,7 +139,7 @@ public class PageController {
         addUserToModel(session, model);
 
         model.addAttribute("transactions", transactionRepository.findAll());
-        model.addAttribute("inventory", inventoryRepository.findAll());
+        model.addAttribute("inventory", inventoryService.getAllInventory());
 
         model.addAttribute("selectedInventoryID", inventoryID);
 
@@ -193,13 +189,12 @@ public class PageController {
 
         model.addAttribute(
                 "lowStock",
-                inventoryRepository.findLowStock()
+                inventoryService.getLowStock()
         );
 
         model.addAttribute(
                 "expiringSoon",
-                inventoryRepository.findExpiringSoon(
-                        LocalDate.now().plusDays(90)
+                inventoryService.getExpiringSoon(LocalDate.now().plusDays(90)
                 )
         );
 
@@ -221,7 +216,7 @@ public class PageController {
 
         model.addAttribute(
                 "lowStock",
-                inventoryRepository.findLowStock()
+                inventoryService.getLowStock()
         );
 
         model.addAttribute(
@@ -457,7 +452,7 @@ public class PageController {
 
         model.addAttribute(
                 "medications",
-                medicationRepository.findByNameContainingIgnoreCase(searchTerm)
+                medicationService.searchMedications(searchTerm)
         );
 
         model.addAttribute("searchTerm", searchTerm);
@@ -476,7 +471,7 @@ public class PageController {
 
         model.addAttribute(
                 "inventory",
-                inventoryRepository.findAllOrderByExpirationDate()
+                inventoryService.getAllOrderByExpirationDate()
         );
 
         return "sortMedication";
