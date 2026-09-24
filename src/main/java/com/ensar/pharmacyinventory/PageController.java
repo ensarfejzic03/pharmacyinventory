@@ -1,6 +1,5 @@
 package com.ensar.pharmacyinventory;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,30 +8,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Controller
 public class PageController {
 
     private final InventoryService inventoryService;
-    private SupplierRepository supplierRepository;
     private MedicationService medicationService;
     private TransactionService transactionService;
-    private UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserService userService;
+    private final SupplierService supplierService;
 
     PageController(
-            SupplierRepository supplierRepository,
             MedicationService medicationService,
             TransactionService transactionService,
-            UserRepository userRepository,
-            InventoryService inventoryService) {
+            InventoryService inventoryService,
+            UserService userService, SupplierService supplierService) {
 
-        this.supplierRepository = supplierRepository;
         this.medicationService = medicationService;
         this.transactionService = transactionService;
-        this.userRepository = userRepository;
         this.inventoryService = inventoryService;
+        this.userService = userService;
+        this.supplierService = supplierService;
     }
 
     @GetMapping("/login")
@@ -46,13 +43,13 @@ public class PageController {
             @RequestParam String password,
             HttpSession session) {
 
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userService.findByEmail(email);
 
         if (user == null) {
             return "redirect:/login?error=true";
         }
 
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+        if (!userService.passwordMatches(password, user.getPasswordHash())) {
             return "redirect:/login?error=true";
         }
 
@@ -251,7 +248,7 @@ public class PageController {
 
         model.addAttribute(
                 "suppliers",
-                supplierRepository.findAll()
+                supplierService.getAllSuppliers()
         );
 
         return "addMedication";
@@ -317,7 +314,7 @@ public class PageController {
 
         model.addAttribute(
                 "suppliers",
-                supplierRepository.findAll()
+                supplierService.getAllSuppliers()
         );
 
         return "editMedication";
@@ -372,8 +369,8 @@ public class PageController {
 
         model.addAttribute(
                 "users",
-                userRepository.findAll()
-        );
+                            userService.getAllUsers()
+                            );
 
         return "manageUsers";
     }
@@ -394,19 +391,17 @@ public class PageController {
         if (!hasRole(session, "Admin")) {
             return "redirect:/dashboard";
         }
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userService.emailExists(email)) {
             return "redirect:/manageUsers?emailError=true";
         }
-        User user = new User();
 
-        user.setFirstName(first_name);
-        user.setLastName(last_name);
-        user.setEmail(email);
-        user.setPasswordHash(passwordEncoder.encode(password));
-        user.setRole(role);
-        user.setCreatedAt(LocalDateTime.now());
-
-        userRepository.save(user);
+        userService.createUser(
+                first_name,
+                last_name,
+                email,
+                password,
+                role
+        );
 
         return "redirect:/manageUsers";
     }
@@ -430,8 +425,7 @@ public class PageController {
             return "redirect:/manageUsers";
         }
 
-        userRepository.deleteById(userID);
-
+        userService.deleteUser(userID);
         return "redirect:/manageUsers";
     }
 
