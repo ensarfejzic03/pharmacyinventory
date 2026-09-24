@@ -4,32 +4,47 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionService {
-    private TransactionRepository transactionRepository;
-    private InventoryRepository inventoryRepository;
+
+    private final TransactionRepository transactionRepository;
+    private final InventoryRepository inventoryRepository;
 
     public TransactionService(TransactionRepository transactionRepository,
-                              InventoryRepository inventoryRepository){
+                              InventoryRepository inventoryRepository) {
         this.transactionRepository = transactionRepository;
         this.inventoryRepository = inventoryRepository;
     }
+
     @Transactional
     public void recordTransaction(int inventoryID,
-                                int userID,
-                                String transactionType,
-                                int amountChanged){
-        Inventory inventory = inventoryRepository.findById(inventoryID).orElseThrow();
+                                  int userID,
+                                  String transactionType,
+                                  int amountChanged) {
+
+        Inventory inventory =
+                inventoryRepository.findById(inventoryID).orElseThrow();
+
         if (transactionType.equals("Stock In")) {
-            inventory.setQuantity(inventory.getQuantity() + amountChanged);
+            inventory.setQuantity(
+                    inventory.getQuantity() + amountChanged
+            );
+
         } else if (transactionType.equals("Stock Out")) {
+
             if (inventory.getQuantity() < amountChanged) {
-                throw new IllegalArgumentException("Not enough stock available");
+                throw new IllegalArgumentException(
+                        "Not enough stock available"
+                );
             }
 
-            inventory.setQuantity(inventory.getQuantity() - amountChanged);
+            inventory.setQuantity(
+                    inventory.getQuantity() - amountChanged
+            );
         }
+
         inventoryRepository.save(inventory);
 
         Transaction transaction = new Transaction();
@@ -40,5 +55,25 @@ public class TransactionService {
         transaction.setTransactionDate(LocalDateTime.now());
 
         transactionRepository.save(transaction);
+    }
+
+    public long getTransactionCount() {
+        return transactionRepository.count();
+    }
+
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    public List<Object[]> getMostUsedMedications() {
+        return transactionRepository.findMostUsedMedications();
+    }
+
+    public List<Object[]> getMonthlyUsageTrends() {
+        return transactionRepository.findMonthlyUsageTrends();
+    }
+
+    public List<Object[]> getHighRiskMedications() {
+        return transactionRepository.findHighRiskMedications();
     }
 }

@@ -17,7 +17,6 @@ public class PageController {
     private final InventoryService inventoryService;
     private SupplierRepository supplierRepository;
     private MedicationService medicationService;
-    private TransactionRepository transactionRepository;
     private TransactionService transactionService;
     private UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -25,14 +24,12 @@ public class PageController {
     PageController(
             SupplierRepository supplierRepository,
             MedicationService medicationService,
-            TransactionRepository transactionRepository,
             TransactionService transactionService,
             UserRepository userRepository,
             InventoryService inventoryService) {
 
         this.supplierRepository = supplierRepository;
         this.medicationService = medicationService;
-        this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
         this.userRepository = userRepository;
         this.inventoryService = inventoryService;
@@ -93,7 +90,7 @@ public class PageController {
 
         model.addAttribute(
                 "totalTransactions",
-                transactionRepository.count()
+                transactionService.getTransactionCount()
         );
 
         return "dashboard";
@@ -138,7 +135,7 @@ public class PageController {
 
         addUserToModel(session, model);
 
-        model.addAttribute("transactions", transactionRepository.findAll());
+        model.addAttribute("transactions", transactionService.getAllTransactions());
         model.addAttribute("inventory", inventoryService.getAllInventory());
 
         model.addAttribute("selectedInventoryID", inventoryID);
@@ -221,17 +218,17 @@ public class PageController {
 
         model.addAttribute(
                 "mostUsedMedications",
-                transactionRepository.findMostUsedMedications()
+                transactionService.getMostUsedMedications()
         );
 
         model.addAttribute(
                 "monthlyUsageTrends",
-                transactionRepository.findMonthlyUsageTrends()
+                transactionService.getMonthlyUsageTrends()
         );
 
         model.addAttribute(
                 "highRiskMedications",
-                transactionRepository.findHighRiskMedications()
+                transactionService.getHighRiskMedications()
         );
 
         return "reports";

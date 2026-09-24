@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+public interface TransactionRepository
+        extends JpaRepository<Transaction, Integer> {
 
     @Query("""
             SELECT t.inventory.medication.name,
@@ -42,7 +43,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
                    SUM(t.amountChanged)
             FROM Transaction t
             WHERE t.transactionType = 'Stock Out'
-            AND t.inventory.quantity < t.inventory.medication.reorderThreshold
+            AND t.inventory.quantity
+                < t.inventory.medication.reorderThreshold
             GROUP BY t.inventory.inventoryID,
                      t.inventory.medication.name,
                      t.inventory.quantity,
