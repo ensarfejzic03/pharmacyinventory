@@ -35,7 +35,7 @@ public class TransactionService {
         } else if (transactionType.equals("Stock Out")) {
 
             if (inventory.getQuantity() < amountChanged) {
-                throw new IllegalArgumentException(
+                throw new InsufficientStockException(
                         "Not enough stock available"
                 );
             }

@@ -150,7 +150,8 @@ public class PageController {
             @RequestParam int inventory_id,
             @RequestParam String transaction_type,
             @RequestParam int amount_changed,
-            HttpSession session) {
+            HttpSession session,
+            Model model) {
 
         Integer userID = (Integer) session.getAttribute("userID");
 
@@ -162,12 +163,38 @@ public class PageController {
             return "redirect:/transactions";
         }
 
-        transactionService.recordTransaction(
+       try{ transactionService.recordTransaction(
                 inventory_id,
                 userID,
                 transaction_type,
                 amount_changed
-        );
+        );} catch (InsufficientStockException e) {
+           model.addAttribute("error", e.getMessage());
+
+           addUserToModel(session, model);
+
+           model.addAttribute(
+                   "transactions",
+                   transactionService.getAllTransactions()
+           );
+
+           model.addAttribute(
+                   "inventory",
+                   inventoryService.getAllInventory()
+           );
+
+           model.addAttribute(
+                   "selectedInventoryID",
+                   inventory_id
+           );
+
+           model.addAttribute(
+                   "canUpdateStock",
+                   !hasRole(session, "Technician")
+           );
+
+           return "transactions";
+       }
 
         return "redirect:/transactions";
     }

@@ -197,6 +197,9 @@
             and updates the inventory quantity.
         </p>
         <div th:if="${canUpdateStock}">
+            <script th:if="${error}">
+                alert("[[${error}]]");
+            </script>
             <form action="/transactions" method="post">
 
                 <div class="form-row">
