@@ -24,8 +24,8 @@ public class TransactionService {
                                   String transactionType,
                                   int amountChanged) {
 
-        Inventory inventory =
-                inventoryRepository.findById(inventoryID).orElseThrow();
+        Inventory inventory = inventoryRepository.findById(inventoryID)
+                .orElseThrow(() -> new InventoryNotFoundException("Inventory item not found"));
 
         if (transactionType.equals("Stock In")) {
             inventory.setQuantity(

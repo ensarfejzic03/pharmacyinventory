@@ -168,7 +168,8 @@ public class PageController {
                 userID,
                 transaction_type,
                 amount_changed
-        );} catch (InsufficientStockException e) {
+        );
+       } catch (InsufficientStockException | InventoryNotFoundException e) {
            model.addAttribute("error", e.getMessage());
 
            addUserToModel(session, model);
