@@ -23,6 +23,14 @@ public class TransactionService {
                                   int userID,
                                   String transactionType,
                                   int amountChanged) {
+        if (amountChanged <= 0) {
+            throw new InvalidTransactionException("Transaction amount must be greater than zero");
+        }
+        if (!transactionType.equals("Stock In")
+                && !transactionType.equals("Stock Out")) {
+
+            throw new InvalidTransactionException("Invalid transaction type");
+        }
 
         Inventory inventory = inventoryRepository.findById(inventoryID)
                 .orElseThrow(() -> new InventoryNotFoundException("Inventory item not found"));

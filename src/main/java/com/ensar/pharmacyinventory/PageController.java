@@ -14,8 +14,8 @@ import java.time.LocalDate;
 public class PageController {
 
     private final InventoryService inventoryService;
-    private MedicationService medicationService;
-    private TransactionService transactionService;
+    private final MedicationService medicationService;
+    private final TransactionService transactionService;
     private final UserService userService;
     private final SupplierService supplierService;
 
@@ -169,7 +169,7 @@ public class PageController {
                 transaction_type,
                 amount_changed
         );
-       } catch (InsufficientStockException | InventoryNotFoundException e) {
+       } catch (InsufficientStockException | InventoryNotFoundException | InvalidTransactionException e) {
            model.addAttribute("error", e.getMessage());
 
            addUserToModel(session, model);
