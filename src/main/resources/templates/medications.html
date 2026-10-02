@@ -149,7 +149,9 @@
     <a href="/reports" th:if="${role != 'Technician'}">Reports</a>
     <a href="/logout">Logout</a>
 </div>
-
+<script th:if="${error}">
+    alert("[[${error}]]");
+</script>
 <div class="container">
 
     <div class="top-section">

@@ -50,8 +50,8 @@ public class MedicationService {
             int supplierID,
             String description) {
 
-        Medication medication = medicationRepository.findById(medicationID).orElseThrow();
-
+        Medication medication = medicationRepository.findById(medicationID)
+                .orElseThrow(() -> new MedicationNotFoundException("Medication not found"));
         medication.setName(medicationName);
         medication.setCategory(category);
         medication.setReorderThreshold(reorderThreshold);
@@ -64,7 +64,7 @@ public class MedicationService {
         return medicationRepository.findAll();
     }
     public Medication getMedicationById(int id) {
-        return medicationRepository.findById(id).orElseThrow();
+        return medicationRepository.findById(id).orElseThrow(() -> new MedicationNotFoundException("Medication not found"));
     }
     public List<Medication> searchMedications(String searchTerm) {
         return medicationRepository.findByNameContainingIgnoreCase(searchTerm);

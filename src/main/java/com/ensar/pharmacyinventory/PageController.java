@@ -335,16 +335,29 @@ public class PageController {
 
         addUserToModel(session, model);
 
-        Medication medication = medicationService.getMedicationById(id);
+        try {
+            Medication medication = medicationService.getMedicationById(id);
 
-        model.addAttribute("medication", medication);
+            model.addAttribute("medication", medication);
 
-        model.addAttribute(
-                "suppliers",
-                supplierService.getAllSuppliers()
-        );
+            model.addAttribute(
+                    "suppliers",
+                    supplierService.getAllSuppliers()
+            );
 
-        return "editMedication";
+            return "editMedication";
+
+        } catch (MedicationNotFoundException e) {
+
+            model.addAttribute("error", e.getMessage());
+
+            model.addAttribute(
+                    "medications",
+                    medicationService.getAllMedications()
+            );
+
+            return "medications";
+        }
     }
 
     @PostMapping("/editMedication")
@@ -355,7 +368,8 @@ public class PageController {
             @RequestParam int reorder_threshold,
             @RequestParam int supplier_id,
             @RequestParam String description,
-            HttpSession session) {
+            HttpSession session,
+            Model model) {
 
         if (!isLoggedIn(session)) {
             return "redirect:/login";
@@ -367,14 +381,29 @@ public class PageController {
             return "redirect:/dashboard";
         }
 
-        medicationService.updateMedication(
-                medicationID,
-                medication_name,
-                category,
-                reorder_threshold,
-                supplier_id,
-                description
-        );
+        try {
+            medicationService.updateMedication(
+                    medicationID,
+                    medication_name,
+                    category,
+                    reorder_threshold,
+                    supplier_id,
+                    description
+            );
+
+        } catch (MedicationNotFoundException e) {
+
+            model.addAttribute("error", e.getMessage());
+
+            addUserToModel(session, model);
+
+            model.addAttribute(
+                    "medications",
+                    medicationService.getAllMedications()
+            );
+
+            return "medications";
+        }
 
         return "redirect:/medications";
     }
