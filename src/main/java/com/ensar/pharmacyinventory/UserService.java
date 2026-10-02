@@ -39,6 +39,9 @@ public class UserService {
             String email,
             String password,
             String role) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new DuplicateEmailException("A user with this email already exists");
+        }
 
         User user = new User();
 

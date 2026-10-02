@@ -448,10 +448,7 @@ public class PageController {
         if (!hasRole(session, "Admin")) {
             return "redirect:/dashboard";
         }
-        if (userService.emailExists(email)) {
-            return "redirect:/manageUsers?emailError=true";
-        }
-
+    try {
         userService.createUser(
                 first_name,
                 last_name,
@@ -459,6 +456,9 @@ public class PageController {
                 password,
                 role
         );
+    } catch (DuplicateEmailException e){
+        return "redirect:/manageUsers?emailError=true";
+    }
 
         return "redirect:/manageUsers";
     }
