@@ -130,17 +130,7 @@ public class PageController {
             return "redirect:/login";
         }
 
-        addUserToModel(session, model);
-
-        model.addAttribute("transactions", transactionService.getAllTransactions());
-        model.addAttribute("inventory", inventoryService.getAllInventory());
-
-        model.addAttribute("selectedInventoryID", inventoryID);
-
-        model.addAttribute(
-                "canUpdateStock",
-                !hasRole(session, "Technician")
-        );
+        addTransactionPageData(session, model, inventoryID);
 
         return "transactions";
     }
@@ -172,27 +162,7 @@ public class PageController {
        } catch (InsufficientStockException | InventoryNotFoundException | InvalidTransactionException e) {
            model.addAttribute("error", e.getMessage());
 
-           addUserToModel(session, model);
-
-           model.addAttribute(
-                   "transactions",
-                   transactionService.getAllTransactions()
-           );
-
-           model.addAttribute(
-                   "inventory",
-                   inventoryService.getAllInventory()
-           );
-
-           model.addAttribute(
-                   "selectedInventoryID",
-                   inventory_id
-           );
-
-           model.addAttribute(
-                   "canUpdateStock",
-                   !hasRole(session, "Technician")
-           );
+           addTransactionPageData(session, model, inventory_id);
 
            return "transactions";
        }
@@ -563,6 +533,33 @@ public class PageController {
         model.addAttribute(
                 "role",
                 session.getAttribute("role")
+        );
+    }
+    private void addTransactionPageData(
+            HttpSession session,
+            Model model,
+            Integer selectedInventoryID) {
+
+        addUserToModel(session, model);
+
+        model.addAttribute(
+                "transactions",
+                transactionService.getAllTransactions()
+        );
+
+        model.addAttribute(
+                "inventory",
+                inventoryService.getAllInventory()
+        );
+
+        model.addAttribute(
+                "selectedInventoryID",
+                selectedInventoryID
+        );
+
+        model.addAttribute(
+                "canUpdateStock",
+                !hasRole(session, "Technician")
         );
     }
 }
