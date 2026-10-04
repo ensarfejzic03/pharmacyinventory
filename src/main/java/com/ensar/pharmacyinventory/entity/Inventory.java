@@ -1,4 +1,4 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.entity;
 
 import jakarta.persistence.*;
 

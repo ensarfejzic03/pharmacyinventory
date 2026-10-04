@@ -1,5 +1,7 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.service;
 
+import com.ensar.pharmacyinventory.entity.Inventory;
+import com.ensar.pharmacyinventory.repository.InventoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

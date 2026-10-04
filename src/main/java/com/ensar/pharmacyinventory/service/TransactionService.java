@@ -1,5 +1,12 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.service;
 
+import com.ensar.pharmacyinventory.entity.Inventory;
+import com.ensar.pharmacyinventory.repository.InventoryRepository;
+import com.ensar.pharmacyinventory.entity.Transaction;
+import com.ensar.pharmacyinventory.repository.TransactionRepository;
+import com.ensar.pharmacyinventory.exception.InsufficientStockException;
+import com.ensar.pharmacyinventory.exception.InvalidTransactionException;
+import com.ensar.pharmacyinventory.exception.InventoryNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

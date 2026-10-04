@@ -1,5 +1,8 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.service;
 
+import com.ensar.pharmacyinventory.entity.User;
+import com.ensar.pharmacyinventory.repository.UserRepository;
+import com.ensar.pharmacyinventory.exception.DuplicateEmailException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

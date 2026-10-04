@@ -1,4 +1,4 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.exception;
 
 public class DuplicateEmailException extends RuntimeException{
     public DuplicateEmailException(String message){

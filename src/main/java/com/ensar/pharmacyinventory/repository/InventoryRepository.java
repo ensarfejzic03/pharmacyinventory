@@ -1,5 +1,6 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.repository;
 
+import com.ensar.pharmacyinventory.entity.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,5 +1,7 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.service;
 
+import com.ensar.pharmacyinventory.entity.Supplier;
+import com.ensar.pharmacyinventory.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

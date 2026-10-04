@@ -1,5 +1,6 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.repository;
 
+import com.ensar.pharmacyinventory.entity.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SupplierRepository extends JpaRepository<Supplier,Integer> {

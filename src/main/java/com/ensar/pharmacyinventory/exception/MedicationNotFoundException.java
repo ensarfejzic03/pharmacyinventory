@@ -1,4 +1,4 @@
-package com.ensar.pharmacyinventory;
+package com.ensar.pharmacyinventory.exception;
 
 public class MedicationNotFoundException extends RuntimeException{
     public MedicationNotFoundException(String message){
