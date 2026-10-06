@@ -8,17 +8,21 @@ The system allows pharmacy staff to manage medications, monitor inventory, recor
 
 - User login and logout
 - BCrypt password hashing
-- Role-based access control
+- Custom session-based authentication and role-based authorization
 - Medication management
 - Inventory tracking
 - Stock In and Stock Out transactions
 - Low-stock alerts
 - Expiration-date alerts
 - Medication search
-- Sort medications by expiration date
+- Sort inventory by expiration date
 - Usage and inventory reports
 - Dashboard statistics
 - User account management
+- Custom exception handling and transaction validation
+- Automated service unit tests
+- Duplicate email validation
+
 
 ## User Roles
 
@@ -53,9 +57,9 @@ Each role has different permissions within the system.
 
 - View medications
 - View inventory
-- Update stock
+- Record Stock In and Stock Out transactions
 - View reports
-- Manage low-stock inventory
+- View alerts
 
 ### Technician
 
@@ -77,6 +81,18 @@ Each role has different permissions within the system.
 - HTML
 - CSS
 - BCrypt
+- JUnit 5
+- Mockito
+
+## Architecture
+
+The application follows a layered architecture:
+
+- **Controller** - Handles HTTP requests, session checks, role-based access, and page navigation
+- **Service** - Contains business logic, validation, and transaction handling
+- **Repository** - Handles database access using Spring Data JPA
+- **Entity** - Represents database tables and relationships
+- **Exception** - Contains custom exceptions for application-specific error handling
 
 ## Main Pages
 
@@ -95,7 +111,7 @@ Allows users to:
 
 - View medication records
 - Search medications
-- Sort medications by expiration date
+- Sort inventory by expiration date
 - Add medications
 - Edit medications
 
@@ -165,8 +181,19 @@ The system also includes:
 - Login validation
 - Session-based authentication
 - Role-based page access
-- Protection against duplicate user emails
 - Prevention of deleting the currently logged-in Admin account
+
+## Testing
+
+The project includes unit tests using JUnit 5 and Mockito.
+
+Current tests cover:
+
+- Stock Out quantity updates
+- Insufficient stock handling
+- Invalid transaction amounts
+- Invalid transaction types
+- Missing inventory handling
 
 ## Database
 
@@ -174,3 +201,12 @@ The application uses a MySQL database named:
 
 ```text
 pharmacy_db
+```
+
+## How to Run
+
+1. Clone or download the repository from GitHub.
+2. Create a MySQL database named `pharmacy_db`.
+3. Configure the database connection in `application.properties`.
+4. Run the Spring Boot application.
+5. Open the application in a browser at `http://localhost:8080`.
