@@ -8,6 +8,7 @@ import com.ensar.pharmacyinventory.exception.InsufficientStockException;
 import com.ensar.pharmacyinventory.exception.InvalidTransactionException;
 import com.ensar.pharmacyinventory.exception.InventoryNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -77,7 +78,9 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository.findAll(
+                Sort.by(Sort.Direction.DESC,"transactionDate")
+        );
     }
 
     public List<Object[]> getMostUsedMedications() {

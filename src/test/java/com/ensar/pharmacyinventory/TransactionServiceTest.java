@@ -19,13 +19,12 @@ import static org.mockito.Mockito.when;
 
 public class TransactionServiceTest {
 
-    private TransactionRepository transactionRepository;
     private InventoryRepository inventoryRepository;
     private TransactionService transactionService;
 
     @BeforeEach
     void setUp() {
-        transactionRepository = Mockito.mock(TransactionRepository.class);
+        TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
         inventoryRepository = Mockito.mock(InventoryRepository.class);
 
         transactionService = new TransactionService(
