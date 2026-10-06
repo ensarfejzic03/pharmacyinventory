@@ -32,10 +32,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean emailExists(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-
     public void createUser(
             String firstName,
             String lastName,
